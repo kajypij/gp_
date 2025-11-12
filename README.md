@@ -12,49 +12,17 @@
 
 **Целевая переменная:** `price_per_sqft` (цена за квадратный фут).
 
-## Структура проекта
-
-```
-GP2_hw_api_scraping/
-├── config.yaml              # Конфигурационный файл с API ключами и настройками
-├── requirements.txt         # Зависимости проекта
-├── README.md                # Документация проекта
-├── .gitignore               # Игнорируемые файлы для Git
-├── data/
-│   ├── raw/                 # Исходные данные
-│   │   ├── crexi_data.csv
-│   │   ├── loopnet_data.csv
-│   │   ├── census_data.csv
-│   │   └── google_maps_data.csv
-│   └── processed/           # Обработанные данные
-│       ├── combined_dataset.csv
-│       └── cleaned_dataset.csv
-├── scripts/
-│   ├── logger_config.py     # Настройка логирования
-│   ├── utils.py             # Вспомогательные функции
-│   ├── scrape_crexi.py      # Скрапинг Crexi
-│   ├── scrape_loopnet.py    # Скрапинг LoopNet
-│   ├── api_census.py        # API Census Bureau
-│   ├── api_google_maps.py   # API Google Maps
-│   └── combine_data.py      # Объединение данных
-├── notebooks/
-│   └── eda.ipynb            # Разведочный анализ данных
-└── logs/
-    └── project.log          # Логи выполнения
-```
 
 ## Установка и настройка
 
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <repository_url>
-cd GP2_hw_api_scraping
+git clone https://github.com/kajypij/gp_.git
+cd gp_
 ```
 
 ### 2. Установка зависимостей
-
-Рекомендуется использовать виртуальное окружение:
 
 ```bash
 python3 -m venv venv
@@ -64,7 +32,7 @@ pip install -r requirements.txt
 
 ### 3. Настройка конфигурации
 
-Откройте файл `config.yaml` и заполните API ключи:
+Откройте файл `config.yaml` и заполните API ключи (ключи в файле вымышленные):
 
 ```yaml
 api_keys:
@@ -91,49 +59,13 @@ logging:
 
 ### Сбор данных
 
-Полный пайплайн можно запустить через `main.py`, либо по шагам, как описано ниже.
+Полный пайплайн можно запустить через `main.py`
 
-#### 1. Веб-скрапинг Crexi
+В результате в `data/processed/combined_dataset.csv` сохраняется объединённый набор, готовый к анализу.
 
-```bash
-cd scripts
-python scrape_crexi.py
-```
+### EDA
 
-#### 2. Веб-скрапинг LoopNet
-
-```bash
-python scrape_loopnet.py
-```
-
-#### 3. Сбор данных через Census Bureau API
-
-```bash
-python api_census.py
-```
-
-#### 4. Сбор данных через Google Maps API
-
-```bash
-python api_google_maps.py
-```
-
-#### 5. Объединение всех данных
-
-```bash
-python combine_data.py
-```
-
-В результате в `data/processed/combined_dataset.csv` сохраняется объединённый набор, а в `data/processed/cleaned_dataset.csv` — очищенный датасет, готовый к анализу.
-
-### Разведочный анализ данных (EDA)
-
-Откройте ноутбук `notebooks/eda.ipynb` в Jupyter:
-
-```bash
-jupyter notebook notebooks/eda.ipynb
-```
-
+Откройте ноутбук `notebooks/eda.ipynb`
 ## Описание данных
 
 ### Исходные данные
@@ -194,11 +126,11 @@ jupyter notebook notebooks/eda.ipynb
 
 #### `combined_dataset.csv`
 - 9 967 записей × 65 признаков.
-- Содержит оригинальные данные скрапинга, все сгенерированные признаки (`description_length`, `price_per_sqft_log` и др.), а также агрегаты Census (mean/median по каждому числовому показателю на уровне штата). Поля Google Maps присутствуют, но содержат `NaN`, пока не внедрено сопоставление адресов.
+- Содержит оригинальные данные скрапинга, все сгенерированные признаки (`description_length`, `price_per_sqft_log` и др.), а также агрегаты Census (mean/median по каждому числовому показателю на уровне штата). Поля Google Maps присутствуют, но содержат `NaN`, так как API оплачивает IT-департамент компании.
 
 #### `cleaned_dataset.csv`
 - 9 967 записей × 60 признаков.
-- Все поля Google Maps удалены как полностью пустые; 42 признака `census_*` оставлены и полностью заполнены.
+- В нашем примере все поля Google Maps удалены как полностью пустые (у нас нет доступа к платному API Google Maps); 42 признака `census_*` оставлены и полностью заполнены.
 - Пропуски отсутствуют; дубликаты URL удалены.
 
 **Статистика целевой переменной (после очистки):**
@@ -238,7 +170,7 @@ jupyter notebook notebooks/eda.ipynb
 
 1. **Качество данных:**
    - `cleaned_dataset.csv`: 9 967 записей × 60 признаков, пропуски отсутствуют.
-   - 1 057 наблюдений (10.6%) считаются выбросами по IQR, большинство — премиальные локации; сохранены для дальнейшего анализа.
+   - 1 057 наблюдений (10.6%) считаются выбросами по IQR, это премиальные локации, они сохранены для дальнейшего анализа.
 
 2. **Распределение целевой переменной:**
    - Среднее ≈ $193.6, медиана ≈ $99.2; сильная правосторонняя асимметрия.
